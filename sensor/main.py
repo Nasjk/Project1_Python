@@ -4,36 +4,39 @@ import onewire
 import ds18x20
 import json
 
-# Läs in konfiguration från config.json
+# Read configuration from config.json
 temp_config = open('config.json')
 config = json.load(temp_config)
 
-# Ange vilket GPIO-stift sensorn är ansluten till 
+# Specify the GPIO pin to which the sensor is connected
 dat = machine.Pin(config['pin'])
 
-# Skapa en onewire-objekt
+# Create a onewire object
 ds = ds18x20.DS18X20(onewire.OneWire(dat))
 
-# Skanna efter enheter på bussen
+# Scan for devices on the bus
 roms = ds.scan()
-print('Hittade enheter:', roms)
 
-# Ange enhets-ID som en sträng
+# Set the device ID as a string 
 unit_id_str = '(B\x05\xefO \x01\xf5'
 
-# Konvertera enhets-ID från sträng till en bytearray
+# Convert the device ID from a string to a bytearray
 byte_array = bytearray(unit_id_str, 'utf-8')
 
-# Konvertera bytearray till hexadecimal representation
+# Convert the bytearray to hexadecimal representation
 hex_id = ''.join(['{:02x}'.format(byte) for byte in byte_array])
 
-# Loopa och skriv ut temperaturen, unit_ID och sensor_ID i all evighet
+# Loop and print temperature, unit_ID, and sensor_ID 
 while True:
+    # Trigger temperature conversion and wait
     ds.convert_temp()
     time.sleep_ms(config['interval'])
+    
     for rom in roms:
+        # Convert ROM to hexadecimal representation
         roms2 = hex(int.from_bytes(rom, 'little'))
+
+        # Print the unit_ID, sensor_ID, and temperature
         print(hex_id, roms2[2:], end='')
         print('', ds.read_temp(rom), end=' ')
-    print()
-
+    print() # End the line for the next iteration
