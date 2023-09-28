@@ -1,3 +1,10 @@
+#config.json
+#"pin": This is the GPIO pin number where the temperature sensors are connected.
+#It tells the system where to read temperature data.
+
+#"interval": This is the number of seconds between each temperature measurement. 
+It determines how often temperature sensors should read and report temperature data to the system.
+
 {
     "pin": 16,
     "interval": 900
